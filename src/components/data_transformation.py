@@ -24,17 +24,20 @@ class DataTransformation:
     def __init__(self):
         self.data_transformation_config = DataTransformationConfig
     def get_data_transformer_object(self):
-        """
-        This is the function which is responsible for the transformation the features.
-        """
+        '''
+        This function si responsible for data trnasformation
         
+        '''
         try:
-            numerical_columns = ['writing_score', 'reading_score']
+            numerical_columns = ["writing_score", "reading_score"]
             categorical_columns = [
-                'gender',
-                'race_ethnicity','parental_level_of_education',
-                'lunch','test_preparation_course'
+                "gender",
+                "race_ethnicity",
+                "parental_level_of_education",
+                "lunch",
+                "test_preparation_course",
             ]
+
             num_pipeline= Pipeline(
                 steps=[
                 ("imputer",SimpleImputer(strategy="median")),
@@ -42,33 +45,46 @@ class DataTransformation:
 
                 ]
             )
-            cat_pipeline = Pipeline(
-                steps=[
-                ('Imputer', SimpleImputer(strategy='most_frequent')),
-                ('Encoding', OneHotEncoder()),
-                ('Scaler', StandardScaler())
-                ])
-            logging.info('Numerical columns scaling completed.')
-            logging.info('Categoical columns Encoding completed.')
 
-            preprocessor = ColumnTransformer(
-                [
-                ('num_pipeline', num_pipeline, numerical_columns),
-                ('cat_pipeline', cat_pipeline, categorical_columns)
+            cat_pipeline=Pipeline(
+
+                steps=[
+                ("imputer",SimpleImputer(strategy="most_frequent")),
+                ("one_hot_encoder",OneHotEncoder()),
+                ("scaler",StandardScaler(with_mean=False))
                 ]
+
             )
+
+            logging.info(f"Categorical columns: {categorical_columns}")
+            logging.info(f"Numerical columns: {numerical_columns}")
+
+            preprocessor=ColumnTransformer(
+                [
+                ("num_pipeline",num_pipeline,numerical_columns),
+                ("cat_pipelines",cat_pipeline,categorical_columns)
+
+                ]
+
+
+            )
+
             return preprocessor
-        except Exception as e :
+        
+        except Exception as e:
             raise CustomException(e,sys)
             
-    def initiate_data_transformation(self, train_path, test_path):
-        try:
-            train_df = pd.read_csv(train_path)
-            test_df = pd.read_csv(test_path)
-            logging.info('Reading the training and testing data is completed!')
-            logging.info('obtaining the preprocessing object.')
+    def initiate_data_transformation(self,train_path,test_path):
 
-            preprocessing_obj = self.get_data_transformer_object()
+        try:
+            train_df=pd.read_csv(train_path)
+            test_df=pd.read_csv(test_path)
+
+            logging.info("Read train and test data completed")
+
+            logging.info("Obtaining preprocessing object")
+
+            preprocessing_obj=self.get_data_transformer_object()
 
             target_column_name="math_score"
             numerical_columns = ["writing_score", "reading_score"]
@@ -91,19 +107,19 @@ class DataTransformation:
             ]
             test_arr = np.c_[input_feature_test_arr, np.array(target_feature_test_df)]
 
-            logging.info(' Saved the preprocessing object !')
+            logging.info(f"Saved preprocessing object.")
 
             save_object(
-                file_path = self.data_transformation_config.preprocessor_obj_file_path, 
-                obj = preprocessing_obj
-            )
-            return (
-                train_arr, 
-                test_arr, 
-                self.data_transformation_config.preprocessor_obj_file_path
-            )
-        
 
-          
+                file_path=self.data_transformation_config.preprocessor_obj_file_path,
+                obj=preprocessing_obj
+
+            )
+
+            return (
+                train_arr,
+                test_arr,
+                self.data_transformation_config.preprocessor_obj_file_path,
+            )
         except Exception as e:
             raise CustomException(e,sys)

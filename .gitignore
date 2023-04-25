@@ -120,6 +120,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
+EndML_env
 .env
 .venv
 env/

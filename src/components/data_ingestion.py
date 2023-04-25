@@ -1,6 +1,7 @@
 """
 It is the process of collecting the data from various sources and combining them.
 """
+# importing the libraries 
 import os 
 import sys 
 from src.exception import CustomException
@@ -8,26 +9,28 @@ from src.logger import logging
 import pandas as pd 
 from sklearn.model_selection import train_test_split
 from dataclasses import dataclass
-
+# importing the .py files
 from src.components.data_transformation import DataTransformation
 from src.components.data_transformation import DataTransformationConfig
-
-
 from src.components.model_trainer import ModelTrainerConfig
 from src.components.model_trainer import ModelTrainer
-
+# Creating a Data class
+'''
+data class are the special methods can be automatically added, leaving more time for focusing on the class functions instead of the class itself.
+'''
 @dataclass
 class DataIngestionconfig:
-    train_data_path : str = os.path.join('Artifacts','train.csv')
-    test_data_path : str = os.path.join('Artifacts','test.csv')
-    raw_data_path : str = os.path.join('Artifacts','data.csv')
+    train_data_path : str = os.path.join('Artifacts','train.csv') # Saving the Train data in Artifacts folder
+    test_data_path : str = os.path.join('Artifacts','test.csv') # Saving the test data in Artifacts folder
+    raw_data_path : str = os.path.join('Artifacts','data.csv') # Saving the raw data in Artifacts folder
 
-    
+# Creating a Data Ingestion Class
 class DataIngestion :
     def __init__(self):
         self.ingestion_config = DataIngestionconfig()
     def initiate_data_ingestion(self):
-        logging.info('enterd the Data ingestion method or component')
+        logging.info('enterd the Data ingestion method or component') # Log message 
+        # Tru and exception block
         try:
             df = pd.read_csv('notebook/data/stud.csv')
             logging.info('Read the dataset !')
@@ -39,7 +42,7 @@ class DataIngestion :
             train_set.to_csv(self.ingestion_config.train_data_path, index = False, header = True)
             test_set.to_csv(self.ingestion_config.test_data_path, index = False, header = True)
 
-            logging.info('Ingestion of the data is completed !')
+            logging.info('Ingestion of the data is completed !')  # Log message 
 
             return (
                 self.ingestion_config.train_data_path,
